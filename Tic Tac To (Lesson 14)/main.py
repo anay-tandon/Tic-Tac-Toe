@@ -2,6 +2,54 @@ import random
 import tkinter
 from tkinter import *
 from functools import partial
+from copy import deepcopy
+
+# sign variable to decide the turn of each player
+sign = 0
+
+# creates an empty board
+global board
+board = [[" " for x in range(3)] for y in range(3)]
+
+def isfree(i, j):
+    return board[i][j] == " "
+
+# check board is full or not
+def isfull():
+    flag = True
+    for i in board:
+        if (i.count(" ") > 0):
+            flag = False
+    return flag
+
+# check l(O/X) won the match or not
+def winner(b, l):
+    return(
+        (b[0][0] == l and b[0][1] == l and b[0][2] == l) or
+        (b[1][0] == l and b[1][1] == l and b[1][2] == l) or
+        (b[2][0] == l and b[2][1] == l and b[2][2] == l) or
+        (b[0][0] == l and b[1][0] == l and b[2][0] == l) or
+        (b[0][1] == l and b[1][1] == l and b[2][1] == l) or
+        (b[0][2] == l and b[1][2] == l and b[2][2] == l) or
+        (b[0][0] == l and b[1][1] == l and b[2][2] == l) or
+        (b[0][2] == l and b[1][1] == l and b[2][0] == l)
+    )
+
+# create the GUI for the gameboard for play along with another player
+def gameboard_pl(game_board, l1, l2):
+    global button
+    button = []
+    for i in range(3):
+        m = 3 + i
+        button.append(i)
+        button[i] = []
+        for j in range(3):
+            n = j
+            button[i].append(j)
+            get_t = partial(get_text, i, j, game_board, l1, l2)
+            button[i][j] = Button(game_board, bd = 5, command = get_t, height = 4, width = 8)
+            button[i][j].grid(row = m, column = n)
+    game_board.mainloop()
 
 def gameboard_pc(game_board, l1, l2):
     global button
@@ -13,10 +61,10 @@ def gameboard_pc(game_board, l1, l2):
         for j in range(3):
             n = j
             button[i].append(j)
-            get_t = partial(get_text_pc, i, j, gameboard, l1, l2)
+            get_t = partial(get_text_pc, i, j, game_board, l1, l2)
             button[i][j] = Button(game_board, bd = 5, command = get_t, height = 4, width = 8)
             button[i][j].grid(row = m, column = n)
-    gameboard.mainloop()
+    game_board.mainloop()
 
 def withpc(game_board):
     game_board.destroy()
@@ -64,3 +112,4 @@ def play():
 
 if __name__ == "__main__":
     play()
+
