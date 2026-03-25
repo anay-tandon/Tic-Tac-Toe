@@ -3,6 +3,7 @@ import tkinter
 from tkinter import *
 from functools import partial
 from copy import deepcopy
+from tkinter import messagebox
 
 # sign variable to decide the turn of each player
 sign = 0
@@ -11,8 +12,105 @@ sign = 0
 global board
 board = [[" " for x in range(3)] for y in range(3)]
 
+def pc():
+    possiblemove = []
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j] == " ":
+                possiblemove.append((i, j))
+    move = []
+    if possiblemove == []:
+        return
+    else:
+        for let in ["O", "X"]:
+            for i in possiblemove:
+                boardcopy = deepcopy(board)
+                boardcopy[i[0]][i[1]] = let
+                if winner(boardcopy, let):
+                    return i
+        
+        corner = []
+        for i in possiblemove:
+            if i in [[0, 0], [0, 2], [2, 0], [2, 2]]:
+                corner.append(i)
+
+        if len(corner) > 0:
+            move = random.randint(0, len(corner) - 1)
+            return corner[move]
+        
+        edge = []
+        for i in possiblemove:
+            if i in [[0, 1], [1, 0], [1, 2], [2, 1]]:
+                edge.append(i)
+        if len(edge) > 0:
+            move = random.randint(0, len(edge) - 1)
+            return edge[move]
+        
 def isfree(i, j):
     return board[i][j] == " "
+
+def get_text(i, j, gb, l1, l2):
+    global sign
+    if board[i][j] == " ":
+
+        if sign % 2 == 0:
+         l1.config(state = DISABLED)
+         l2.config(state = ACTIVE)
+         board[i][j] = "X"
+        
+        else:
+          l2.config(state = DISABLED)
+          l1.config(state = ACTIVE)
+          board[i][j] = "O"
+        
+        sign += 1
+        button[i][j].config(text = board[i][j])
+        if winner(board, "X"):
+            gb.destroy()
+            box = messagebox.showinfo("Winner!", "Player 1 wins the match!")
+        elif winner(board, "O"):
+            gb.destroy()
+            box = messagebox.showinfo("Winner!", "Player 2 wins the match!")
+        elif isfull():
+            gb.destroy()
+            box = messagebox.showinfo("Tie Game", "It's a tie!")
+
+def get_text_pc(i, j, gb, l1, l2):
+    global sign
+    if board[i][j] == " ":
+
+        if sign % 2 == 0:
+         l1.config(state = DISABLED)
+         l2.config(state = ACTIVE)
+         board[i][j] = "X"
+        
+        else:
+          board[i][j].config(state = ACTIVE)
+          l2.config(state = DISABLED)
+          l1.config(state = ACTIVE)
+          board[i][j] = "O"
+        
+        sign += 1
+        button[i][j].config(text = board[i][j])
+        x = True
+        if winner(board, "X"):
+            gb.destroy()
+            x = False
+            box = messagebox.showinfo("Winner!", "Player wins the match!")
+        elif winner(board, "O"):
+            gb.destroy()
+            x = False
+            box = messagebox.showinfo("Winner!", "Computer wins the match!")
+        elif isfull():
+            gb.destroy()
+            x = False
+            box = messagebox.showinfo("Tie Game", "It's a tie!")
+        
+        if x:
+            if sign % 2 != 0:
+                move = pc()
+                button[move[0]][move[1]].config(state = DISABLED)
+                get_text_pc(move[0], move[1], gb, l1, l2)
 
 # check board is full or not
 def isfull():
