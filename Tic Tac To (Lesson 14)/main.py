@@ -85,32 +85,33 @@ def get_text_pc(i, j, gb, l1, l2):
          board[i][j] = "X"
         
         else:
-          board[i][j].config(state = ACTIVE)
+          button[i][j].config(state = ACTIVE)
           l2.config(state = DISABLED)
           l1.config(state = ACTIVE)
           board[i][j] = "O"
         
         sign += 1
         button[i][j].config(text = board[i][j])
-        x = True
-        if winner(board, "X"):
-            gb.destroy()
-            x = False
-            box = messagebox.showinfo("Winner!", "Player wins the match!")
-        elif winner(board, "O"):
-            gb.destroy()
-            x = False
-            box = messagebox.showinfo("Winner!", "Computer wins the match!")
-        elif isfull():
-            gb.destroy()
-            x = False
-            box = messagebox.showinfo("Tie Game", "It's a tie!")
+
+    x = True
+    if winner(board, "X"):
+        gb.destroy()
+        x = False
+        box = messagebox.showinfo("Winner!", "Player wins the match!")
+    elif winner(board, "O"):
+        gb.destroy()
+        x = False
+        box = messagebox.showinfo("Winner!", "Computer wins the match!")
+    elif isfull():
+        gb.destroy()
+        x = False
+        box = messagebox.showinfo("Tie Game", "It's a tie!")
         
-        if x:
-            if sign % 2 != 0:
-                move = pc()
-                button[move[0]][move[1]].config(state = DISABLED)
-                get_text_pc(move[0], move[1], gb, l1, l2)
+    if x:
+        if sign % 2 != 0:
+            move = pc()
+            button[move[0]][move[1]].config(state = DISABLED)
+            get_text_pc(move[0], move[1], gb, l1, l2)
 
 # check board is full or not
 def isfull():
